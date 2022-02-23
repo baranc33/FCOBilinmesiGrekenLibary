@@ -61,8 +61,7 @@ namespace FluentVal.Controllers
         public async Task<IActionResult> Create( Customer customer)
         {
       
-            ValidationResult ValResult=_customerValidator.Validate(customer);
-            if (ValResult.IsValid)// isvalid yerine error propertiesi ile hataları yakaliyabiliriz.
+            if (ModelState.IsValid)
             {
                 _context.Add(customer);
                 await _context.SaveChangesAsync();
