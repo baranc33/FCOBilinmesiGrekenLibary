@@ -7,15 +7,20 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FluentVal.Models;
+using FluentValidation;
+using FluentValidation.Results;
 
 namespace FluentVal.Controllers
 {
     public class CustomersController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly IValidator<Customer> _customerValidator;
 
-        public CustomersController(AppDbContext context)
+        public CustomersController(AppDbContext context,IValidator<Customer> customerValidator)
         {
+            _customerValidator = customerValidator;
+
             _context = context;
         }
 
@@ -53,15 +58,18 @@ namespace FluentVal.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create( Customer customer)
         {
-            if (ModelState.IsValid)
+      
+            ValidationResult ValResult=_customerValidator.Validate(customer);
+            if (ValResult.IsValid)// isvalid yerine error propertiesi ile hataları yakaliyabiliriz.
             {
                 _context.Add(customer);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
+
             }
+
             return View(customer);
         }
 

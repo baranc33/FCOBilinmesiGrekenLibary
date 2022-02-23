@@ -9,7 +9,7 @@ namespace FluentVal.FluentValidators
         public CustomerValidator()
         {
 
-            RuleFor(x => x.Name).NotNull().NotEmpty().WithMessage(NotEmptyMessage);
+            RuleFor(x => x.Name).NotEmpty().WithMessage(NotEmptyMessage);
             RuleFor(x => x.Name).MinimumLength(4).WithMessage("En Az 4 karakter olmalı");
             RuleFor(x => x.Name).MaximumLength(40).WithMessage("En Fazla 40 karakter olmalı");
 
