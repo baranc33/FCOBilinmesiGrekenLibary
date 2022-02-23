@@ -1,7 +1,21 @@
+using FluentVal.Models;
+using FluentValidation.AspNetCore;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+.AddFluentValidation(
+    opt =>
+    {
+        opt.RegisterValidatorsFromAssemblyContaining<Program>();
+    });
+builder.Services.AddDbContext<AppDbContext>(
+    options =>
+    {
+        options.UseSqlServer(builder.Configuration["ConnectionStrings:MsSql"]);
+    });
 
 var app = builder.Build();
 
