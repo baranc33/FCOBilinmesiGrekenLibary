@@ -11,6 +11,7 @@ namespace FluentVal.Models
 
 
         public DbSet<Customer> Customers { get; set; }
+        public DbSet<Adress> Adresss { get; set; }
 
 
 
