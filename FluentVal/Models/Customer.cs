@@ -13,6 +13,8 @@
         // ICollection Yerine IList  kulllanma sebebi
         // Customer.Adress[1] şeklinde indexır kullanmak
         public IList<Adress> Adresses { get; set; }=new List<Adress>();
+
+        public Gender gender { get; set; }
     }
 
 }

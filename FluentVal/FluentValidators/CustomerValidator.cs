@@ -26,6 +26,7 @@ namespace FluentVal.FluentValidators
                     return DateTime.Now.AddYears(-18) >= x;
                 }).WithMessage("18 yaşından küçük olamaz");
 
+            RuleFor(x => x.gender).IsInEnum().WithMessage("{PropertyName} alanı Erkek için 1 Bayan için 2 olmalıdır");
 
       
           
