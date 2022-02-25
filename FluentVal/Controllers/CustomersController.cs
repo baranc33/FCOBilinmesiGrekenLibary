@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using FluentVal.Models;
 using FluentValidation;
 using FluentValidation.Results;
+using AutoMapper;
+using FluentVal.DTOs;
 
 namespace FluentVal.Controllers
 {
@@ -17,11 +19,13 @@ namespace FluentVal.Controllers
         private readonly AppDbContext _context;
         private readonly IValidator<Customer> _customerValidator;
 
-        public CustomersController(AppDbContext context,IValidator<Customer> customerValidator)
+        private readonly IMapper _mapper;
+        public CustomersController(AppDbContext context, IValidator<Customer> customerValidator, IMapper mapper)
         {
             _customerValidator = customerValidator;
 
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: Customers
@@ -58,9 +62,9 @@ namespace FluentVal.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public async Task<IActionResult> Create( Customer customer)
+        public async Task<IActionResult> Create(Customer customer)
         {
-      
+
             if (ModelState.IsValid)
             {
                 _context.Add(customer);
@@ -156,5 +160,12 @@ namespace FluentVal.Controllers
         {
             return _context.Customers.Any(e => e.Id == id);
         }
+
+
+        public void TestMapping(List<CustomerDto> dto)
+        {
+            List<Customer> ListCustomer = _mapper.Map<List<Customer>>(dto);
+        }
+
     }
 }

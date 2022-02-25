@@ -3,9 +3,15 @@
     public class CustomerDto
     {
         public int Id { get; set; }
-        public string Name { get; set; } = "";
-        public string LastName { get; set; } = "";
-        public string Email { get; set; } = "";
-        public int Age { get; set; }
+        public string Isim { get; set; } = "";
+        public string EPosta{ get; set; } = "";
+        public int Yas{ get; set; }
+
+        public string FullName { get; set; }
+
+        // önce class ismini sonra property ismini yazarsak otomatik dönüştürme işlemi yapar.
+        public string Number { get; set; }
+        public DateTime ValidDate { get; set; }
     }
+
 }
