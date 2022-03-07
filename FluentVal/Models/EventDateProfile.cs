@@ -14,7 +14,7 @@ namespace FluentVal.Models
             CreateMap<EventDate, EventDateDto>()
                 .ForMember(x=> x.Year,option=> option.MapFrom(y=>y.Date.Year))
                 .ForMember(x=> x.Mounth,option=> option.MapFrom(y=>y.Date.Month))
-                .ForMember(x=> x.Day,option=> option.MapFrom(y=>y.Date.Day)));
+                .ForMember(x=> x.Day,option=> option.MapFrom(y=>y.Date.Day));
 
         }
     }
