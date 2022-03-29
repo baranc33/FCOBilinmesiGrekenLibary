@@ -22,7 +22,42 @@ namespace UdemyIdentity.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult SignUp(UserViewModel user)
+        public async Task<IActionResult> SignUp(UserViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                AppUser user = new AppUser()
+                {
+                    UserName = model.UserName,
+                    Email = model.Email,
+                    PhoneNumber = model.PhoneNumber
+                };
+
+                IdentityResult result = await userManager.CreateAsync(user, model.Password);
+
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Login");
+                }
+                else
+                {
+                    foreach (var item in result.Errors)
+                    {
+                        // eğer en başta key gönderirsek gönderdiğimiz key ilgili inputun altında görünür
+                        // biz genel hata olarak gösterecez
+                        ModelState.AddModelError(string.Empty, item.Description);
+
+                    }
+                }
+                
+            }
+            return View(model);
+        }
+
+
+
+
+        public IActionResult Login()
         {
             return View();
         }
