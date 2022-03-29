@@ -9,7 +9,6 @@ namespace FluentVal.FluentValidators
         public AdressValidator()
         {
 
-
             RuleFor(x=>x.Content).NotEmpty().WithMessage(NotEmptyMessage);
             RuleFor(x => x.Province).NotEmpty().WithMessage(NotEmptyMessage);
             RuleFor(x => x.PostCode).NotEmpty().WithMessage(NotEmptyMessage)
