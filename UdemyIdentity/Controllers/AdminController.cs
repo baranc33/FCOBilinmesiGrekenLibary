@@ -17,9 +17,11 @@ namespace UdemyIdentity.Controllers
 
         public IActionResult Index()
         {
+
+            List<AppUser> users = userManager.Users.ToList();
             //IQueryable qb = userManager.Users;
             // belirli adet alabiliriz
-            return View(userManager.Users.ToList());
+            return View(users);
             // kullanıcı listesi Döner
 
         }

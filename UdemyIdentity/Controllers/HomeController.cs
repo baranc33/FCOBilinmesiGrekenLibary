@@ -30,7 +30,8 @@ namespace UdemyIdentity.Controllers
                 {
                     UserName = model.UserName,
                     Email = model.Email,
-                    PhoneNumber = model.PhoneNumber
+                    PhoneNumber = model.PhoneNumber,
+                    Picture=model.Password
                 };
 
                 IdentityResult result = await userManager.CreateAsync(user, model.Password);
