@@ -3,7 +3,25 @@ using Microsoft.EntityFrameworkCore;
 using UdemyIdentity.CustomValidaton;
 using UdemyIdentity.Models;
 
+
+CookieBuilder cookieBuilder = new CookieBuilder();
+cookieBuilder.Name = "MyBlog";
+cookieBuilder.HttpOnly = false;
+cookieBuilder.Expiration = System.TimeSpan.FromDays(60);
+cookieBuilder.SameSite = SameSiteMode.Lax;
+cookieBuilder.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+
+
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.ConfigureApplicationCookie(opts =>
+{
+    opts.LoginPath = new PathString("/Home/Login");
+    opts.Cookie = cookieBuilder;
+    opts.SlidingExpiration = true;
+});
+
+
 builder.Services.AddMvc();
 
 string con = builder.Configuration["ConnectionStrings:DefaultConnectionString"];
