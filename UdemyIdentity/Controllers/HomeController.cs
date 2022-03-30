@@ -7,12 +7,14 @@ namespace UdemyIdentity.Controllers
 {
     public class HomeController : Controller
     {
-        private UserManager<AppUser> userManager { get; }
-
-        public HomeController(UserManager<AppUser> userManager)
+        public UserManager<AppUser> userManager { get; }
+        public SignInManager<AppUser> signInManager { get; }
+        public HomeController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
         {
             this.userManager = userManager;
+            this.signInManager = signInManager;
         }
+
         public IActionResult Index()
         {
             return View();
@@ -61,6 +63,11 @@ namespace UdemyIdentity.Controllers
         public IActionResult Login()
         {
             return View();
+        }
+        [HttpPost]
+        public IActionResult Login(LoginViewModel model)
+        {
+            return View(model);
         }
     }
 }
