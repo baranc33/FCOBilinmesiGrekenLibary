@@ -24,12 +24,12 @@ namespace UdemyIdentity.CustomValidaton
             }
             // burası sadece 1234 ü etkiler bütün ardaşık sayıları engellemez 
             //o yüzden fazla bu işlemi 3 - 5 parçada yapmalıyız
-            if (password.ToLower().Contains("1234"))
+            if (password.ToLower().Contains("1111"))
             {
                 errors.Add(new IdentityError()
                 {
-                    Code = "PasswordContains1234",
-                    Description = "Şifre Ardaşık Sayı içeremez"
+                    Code = "PasswordContains1111",
+                    Description = "Şifre bu kadar Basit olamaz"
                 });
             }
             // şartları hayal gücüne bağlı olarak arttırıla bilir

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using UdemyIdentity.CustomValidaton;
 using UdemyIdentity.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,13 +15,16 @@ builder.Services.AddDbContext<AppIdentityDbContext>(opts =>
 // ýdentity Baðlantýýsý
 builder.Services.AddIdentity<AppUser, AppRole>(opt =>
 {
+    opt.User.RequireUniqueEmail = true;//evet tek mail olmalý
+    opt.User.AllowedUserNameCharacters = "çiöüðÐÝÇÖÜabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._";
+
     opt.Password.RequiredLength = 4;//minimun deðer
     opt.Password.RequireLowercase = false;
     opt.Password.RequireUppercase = false;
     opt.Password.RequireNonAlphanumeric = false;
     opt.Password.RequireDigit = false;
 
-}).AddEntityFrameworkStores<AppIdentityDbContext>();
+}).AddEntityFrameworkStores<AppIdentityDbContext>().AddPasswordValidator<CustomPasswordValidator>();
 
 
 
