@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using UdemyIdentity.Models;
 using UdemyIdentity.ViewModels;
+ 
 
 namespace UdemyIdentity.Controllers
 {
@@ -33,7 +34,7 @@ namespace UdemyIdentity.Controllers
                     UserName = model.UserName,
                     Email = model.Email,
                     PhoneNumber = model.PhoneNumber,
-                    Picture=model.Password
+                    Picture = model.Password
                 };
 
                 IdentityResult result = await userManager.CreateAsync(user, model.Password);
@@ -52,7 +53,7 @@ namespace UdemyIdentity.Controllers
 
                     }
                 }
-                
+
             }
             return View(model);
         }
@@ -65,8 +66,39 @@ namespace UdemyIdentity.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
+            if (ModelState.IsValid)
+            {
+                AppUser user = await userManager.FindByEmailAsync(model.Email);
+                if (user != null)
+                {
+                    // önce kayıtlı coockileri siliyoruz
+                    await signInManager.SignOutAsync();
+
+                    // 1. true/false program.cs te belirttiğimiz coockie ömrünü aktif eder
+                    // 2. true/false başarısız girişlerde kulanıcı kitleme
+Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.PasswordSignInAsync(user, model.Password, false, false);
+
+                    //if (result.IsNotAllowed)//kullanıcı kitliyken doğru giriş yaparsa
+                    //if (result.Succeeded)// işlem başarılımı
+                    //if (result.IsLockedOut)//kullanıcı kitlimi değilmi
+                    //if (result.RequiresTwoFactor)// iki faktörlü koruma açıkmı?
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction("Index","Member");
+                    }
+
+
+
+                }
+            }
+
+
+
+
+
+
             return View(model);
         }
     }
