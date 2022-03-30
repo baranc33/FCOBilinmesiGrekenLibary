@@ -24,7 +24,8 @@ builder.Services.AddIdentity<AppUser, AppRole>(opt =>
     opt.Password.RequireNonAlphanumeric = false;
     opt.Password.RequireDigit = false;
 
-}).AddEntityFrameworkStores<AppIdentityDbContext>().AddPasswordValidator<CustomPasswordValidator>();
+}).AddEntityFrameworkStores<AppIdentityDbContext>().AddPasswordValidator<CustomPasswordValidator>()
+.AddUserValidator<CustomUserValidator>();
 
 
 
