@@ -92,6 +92,11 @@ Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.Password
 
 
                 }
+                else
+                {
+                    // kullanıcı yoksa Email inputu hedefli bir mesaj yolliyalım
+                    ModelState.AddModelError(nameof(LoginViewModel.Email), "Geçersiz kullanıcı adı veya  şifresi");
+                }
             }
 
 

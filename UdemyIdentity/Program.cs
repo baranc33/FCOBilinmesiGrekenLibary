@@ -7,7 +7,6 @@ using UdemyIdentity.Models;
 CookieBuilder cookieBuilder = new CookieBuilder();
 cookieBuilder.Name = "MyBlog";
 cookieBuilder.HttpOnly = false;
-cookieBuilder.Expiration = System.TimeSpan.FromDays(60);
 cookieBuilder.SameSite = SameSiteMode.Lax;
 cookieBuilder.SecurePolicy = CookieSecurePolicy.SameAsRequest;
 
@@ -17,8 +16,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.ConfigureApplicationCookie(opts =>
 {
     opts.LoginPath = new PathString("/Home/Login");
+    opts.LogoutPath = new PathString("/Member/LogOut");
     opts.Cookie = cookieBuilder;
     opts.SlidingExpiration = true;
+    opts.ExpireTimeSpan = System.TimeSpan.FromDays(60);
+    opts.AccessDeniedPath = new PathString("/Member/AccessDenied");
 });
 
 
