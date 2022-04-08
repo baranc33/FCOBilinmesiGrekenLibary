@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using UdemyIdentity.Models;
 using UdemyIdentity.ViewModels;
- 
+
 
 namespace UdemyIdentity.Controllers
 {
@@ -16,7 +16,7 @@ namespace UdemyIdentity.Controllers
             this.userManager = userManager;
             this.signInManager = signInManager;
         }
-      
+
         public IActionResult Index()
         {
             return View();
@@ -75,24 +75,48 @@ namespace UdemyIdentity.Controllers
                 AppUser user = await userManager.FindByEmailAsync(model.Email);
                 if (user != null)
                 {
-                    // önce kayıtlı coockileri siliyoruz
-                    await signInManager.SignOutAsync();
-
-                    // 1. true/false program.cs te belirttiğimiz coockie ömrünü aktif eder
-                    // 2. true/false başarısız girişlerde kulanıcı kitleme
-                    Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
-
-                    //if (result.IsNotAllowed)//kullanıcı kitliyken doğru giriş yaparsa
-                    //if (result.Succeeded)// işlem başarılımı
-                    //if (result.IsLockedOut)//kullanıcı kitlimi değilmi
-                    //if (result.RequiresTwoFactor)// iki faktörlü koruma açıkmı?
-                    if (result.Succeeded)
+                    if (await userManager.IsLockedOutAsync(user)) // true dönerse kitlidir
                     {
-                        if (TempData["ReturnUrl"] != null)
+                        ModelState.AddModelError("", "Hesabınız Bir Süreliğine kitlenmiştir bir süre sonra tekrar deneyiniz");
+                    }
+                    else
+                    {
+
+                        // önce kayıtlı coockileri siliyoruz
+                        await signInManager.SignOutAsync();
+
+                        // 1. true/false program.cs te belirttiğimiz coockie ömrünü aktif eder
+                        // 2. true/false başarısız girişlerde kulanıcı kitleme
+                        Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
+
+                        //if (result.IsNotAllowed)//kullanıcı kitliyken doğru giriş yaparsa
+                        //if (result.Succeeded)// işlem başarılımı
+                        //if (result.IsLockedOut)//kullanıcı kitlimi değilmi
+                        //if (result.RequiresTwoFactor)// iki faktörlü koruma açıkmı?
+                        if (result.Succeeded)
                         {
-                            return Redirect(TempData["ReturnUrl"].ToString());
+                            await userManager.ResetAccessFailedCountAsync(user);
+                            if (TempData["ReturnUrl"] != null)
+                            {
+                                return Redirect(TempData["ReturnUrl"].ToString());
+                            }
+                            return RedirectToAction("Index", "Member");
                         }
-                        return RedirectToAction("Index","Member");
+                        else
+                        {
+
+                            await userManager.AccessFailedAsync(user);// hhatalı girişi 1 arttır
+                            int fail = await userManager.GetAccessFailedCountAsync(user);// hatalı girişleri getir
+
+                            if (fail == 3)
+                            {// 3 başarısız giriş yapmak
+                                await userManager.SetLockoutEndDateAsync(user, new DateTimeOffset(DateTime.Now.AddMinutes(5)));
+                                ModelState.AddModelError("", "Hesabınız 5 dk boyunca kitlendi.");
+                            }
+                            // hatalı giriş mesajı
+                            ModelState.AddModelError("", $"{fail} Hatalı Giriş Yaptınız");
+
+                        }
                     }
 
 
