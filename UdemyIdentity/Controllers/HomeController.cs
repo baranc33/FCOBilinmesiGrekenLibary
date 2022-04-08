@@ -6,6 +6,7 @@ using UdemyIdentity.ViewModels;
 
 namespace UdemyIdentity.Controllers
 {
+
     public class HomeController : Controller
     {
         public UserManager<AppUser> userManager { get; }
@@ -15,7 +16,7 @@ namespace UdemyIdentity.Controllers
             this.userManager = userManager;
             this.signInManager = signInManager;
         }
-
+      
         public IActionResult Index()
         {
             return View();

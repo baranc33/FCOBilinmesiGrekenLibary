@@ -4,33 +4,16 @@ using UdemyIdentity.CustomValidaton;
 using UdemyIdentity.Models;
 
 
-CookieBuilder cookieBuilder = new CookieBuilder();
-cookieBuilder.Name = "MyBlog";
-cookieBuilder.HttpOnly = false;
-cookieBuilder.SameSite = SameSiteMode.Lax;
-cookieBuilder.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-
-
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.ConfigureApplicationCookie(opts =>
-{
-    opts.LoginPath = new PathString("/Home/Login");
-    opts.LogoutPath = new PathString("/Member/LogOut");
-    opts.Cookie = cookieBuilder;
-    opts.SlidingExpiration = true;
-    opts.ExpireTimeSpan = System.TimeSpan.FromDays(60);
-    opts.AccessDeniedPath = new PathString("/Member/AccessDenied");
-});
 
-
-builder.Services.AddMvc();
 
 string con = builder.Configuration["ConnectionStrings:DefaultConnectionString"];
 builder.Services.AddDbContext<AppIdentityDbContext>(opts =>
 {
     opts.UseSqlServer(con);
 });// entity framework db baðlantýsý
+
 
 // ýdentity Baðlantýýsý
 builder.Services.AddIdentity<AppUser, AppRole>(opt =>
@@ -49,13 +32,53 @@ builder.Services.AddIdentity<AppUser, AppRole>(opt =>
 
 
 
+
+CookieBuilder cookieBuilder = new CookieBuilder();
+cookieBuilder.Name = "MyBlog";
+cookieBuilder.HttpOnly = false;
+cookieBuilder.SameSite = SameSiteMode.Lax;
+cookieBuilder.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+
+
+builder.Services.ConfigureApplicationCookie(opts =>
+{
+    opts.LoginPath = new PathString("/Home/Login");
+    opts.LogoutPath = new PathString("/Member/LogOut");
+    opts.Cookie = cookieBuilder;
+    opts.SlidingExpiration = true;
+    opts.ExpireTimeSpan = System.TimeSpan.FromDays(60);
+    opts.AccessDeniedPath = new PathString("/Member/AccessDenied");
+});
+
+
+
+
+
+builder.Services.AddMvc();
+// Endpoint routing does not support hatasý için
+// builder.Services.AddMvc(option => option.EnableEndpointRouting = false); 
+
+
+
+
+
 var app = builder.Build();
 app.UseDeveloperExceptionPage();// developer hata mesajlarý
 app.UseStatusCodePages();// özellikle bir content dönmiyen sayfalarda hata içeriði
 app.UseStaticFiles();
-
+app.UseAuthentication();
+app.UseAuthorization();// derste hoca bunu yazmiyor ama yazmayýnca hata veriyor
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+
+
+
+
+
+
+
+
 
 app.Run();
