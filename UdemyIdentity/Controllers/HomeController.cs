@@ -61,9 +61,10 @@ namespace UdemyIdentity.Controllers
 
 
 
-
-        public IActionResult Login()
+        [HttpGet]
+        public IActionResult Login(string ReturnUrl)
         {
+            TempData["ReturnUrl"] = ReturnUrl;
             return View();
         }
         [HttpPost]
@@ -79,7 +80,7 @@ namespace UdemyIdentity.Controllers
 
                     // 1. true/false program.cs te belirttiğimiz coockie ömrünü aktif eder
                     // 2. true/false başarısız girişlerde kulanıcı kitleme
-Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.PasswordSignInAsync(user, model.Password, false, false);
+                    Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
 
                     //if (result.IsNotAllowed)//kullanıcı kitliyken doğru giriş yaparsa
                     //if (result.Succeeded)// işlem başarılımı
@@ -87,6 +88,10 @@ Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.Password
                     //if (result.RequiresTwoFactor)// iki faktörlü koruma açıkmı?
                     if (result.Succeeded)
                     {
+                        if (TempData["ReturnUrl"] != null)
+                        {
+                            return Redirect(TempData["ReturnUrl"].ToString());
+                        }
                         return RedirectToAction("Index","Member");
                     }
 
