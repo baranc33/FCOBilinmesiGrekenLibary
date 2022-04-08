@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using UdemyIdentity.CustomValidaton;
@@ -28,7 +29,8 @@ builder.Services.AddIdentity<AppUser, AppRole>(opt =>
     opt.Password.RequireDigit = false;
 
 }).AddEntityFrameworkStores<AppIdentityDbContext>().AddPasswordValidator<CustomPasswordValidator>()
-.AddUserValidator<CustomUserValidator>().AddErrorDescriber<CustomIdentityErrorDescriber>();
+.AddUserValidator<CustomUserValidator>().AddErrorDescriber<CustomIdentityErrorDescriber>()
+.AddDefaultTokenProviders();
 
 
 

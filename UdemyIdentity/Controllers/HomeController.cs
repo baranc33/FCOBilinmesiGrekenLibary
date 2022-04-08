@@ -154,9 +154,12 @@ namespace UdemyIdentity.Controllers
                 {
                     //user manager sınıfından bir token oluşturuyoruz
                     // bu tokenı maile ile yollicazki doğrulama işleminde doğru mail adresinden 
-                    // dönüş olduğunu onaylamak için
+                    // dönüş olduğunu onaylamak için bu tokenı oluşturmak için program.cs te service eklemeliyiz
+                    // ıdentity altına .AddDefaultTokenProviders();
+                    //
                     string passwordResetToken = userManager.GeneratePasswordResetTokenAsync(user).Result;
 
+                    // bir link oluşturcaz mailde tıkladığında gideceği yer
                     string passwordResetLink = Url.Action("ResetPasswordConfirm", "Home", new
                     {
                         userId = user.Id,
@@ -165,13 +168,15 @@ namespace UdemyIdentity.Controllers
 
                     //  www.bıdıbıdı.com/Home/ResetPasswordConfirm?userId=sdjfsjf&token=dfjkdjfdjf
 
-                    //Helper.PasswordReset.PasswordResetSendEmail(passwordResetLink, user.Email);
+                    Helper.PasswordReset.PasswordResetSendEmail(passwordResetLink, user.Email);
 
+                    // mail gönderildimi diğe bilgi ekliyoruz
                     ViewBag.status = "success";
                     TempData["durum"] = true.ToString();
                 }
                 else
                 {
+                    // email hatalı ise
                     ModelState.AddModelError("", "Sistemde kayıtlı email adresi bulunamamıştır.");
                 }
                 return View(passwordResetViewModel);
