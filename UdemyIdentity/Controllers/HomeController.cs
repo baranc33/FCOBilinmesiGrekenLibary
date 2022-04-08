@@ -136,5 +136,52 @@ namespace UdemyIdentity.Controllers
 
             return View(model);
         }
+
+        public IActionResult ResetPassword()
+        {
+            TempData["durum"] = null;
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult ResetPassword(PasswordResetViewModel passwordResetViewModel)
+        {
+            if (TempData["durum"] == null)
+            {
+                AppUser user = userManager.FindByEmailAsync(passwordResetViewModel.Email).Result;
+                //  kullanıcı doğru varmı bakıyoruz
+                if (user != null)
+                {
+                    //user manager sınıfından bir token oluşturuyoruz
+                    // bu tokenı maile ile yollicazki doğrulama işleminde doğru mail adresinden 
+                    // dönüş olduğunu onaylamak için
+                    string passwordResetToken = userManager.GeneratePasswordResetTokenAsync(user).Result;
+
+                    string passwordResetLink = Url.Action("ResetPasswordConfirm", "Home", new
+                    {
+                        userId = user.Id,
+                        token = passwordResetToken
+                    }, HttpContext.Request.Scheme);
+
+                    //  www.bıdıbıdı.com/Home/ResetPasswordConfirm?userId=sdjfsjf&token=dfjkdjfdjf
+
+                    //Helper.PasswordReset.PasswordResetSendEmail(passwordResetLink, user.Email);
+
+                    ViewBag.status = "success";
+                    TempData["durum"] = true.ToString();
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Sistemde kayıtlı email adresi bulunamamıştır.");
+                }
+                return View(passwordResetViewModel);
+            }
+            else
+            {
+                return RedirectToAction("ResetPassword");
+            }
+        }
+
+
     }
 }
