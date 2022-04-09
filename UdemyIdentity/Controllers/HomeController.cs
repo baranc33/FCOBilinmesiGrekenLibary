@@ -189,15 +189,62 @@ namespace UdemyIdentity.Controllers
             }
         }
 
-
+        [HttpGet]
         public IActionResult ResetPasswordConfirm(string userId, string token)
         {
+            // gelen bilgileri tempdataya yazıyoruz post kısmından erişebilmek için
+            // aynı zamanda bu şifre ve şifre tekrarı gibi seçenek yaparsak
+            // bu bilgileri tekrar tekrar göndermek yerine temp datadan çekeriiz
             TempData["userId"] = userId;
             TempData["token"] = token;
-
             return View();
         }
 
+
+        [HttpPost]// bind işlemi ile sadece şifreyi alıyoruz. Email gerekmediğini belirtiyoruz
+        public async Task<IActionResult> ResetPasswordConfirm([Bind("PasswordNew")] PasswordResetViewModel model)
+        {
+          
+                string userId = TempData["userId"].ToString();
+                string token = TempData["token"].ToString();
+
+                AppUser user = await userManager.FindByIdAsync(userId);
+
+                if (user != null)
+                {//bu oluşturduğumuz token içersinde securityStamp te bulunmaktadır
+                 // şifreyi değiştirdikten sonra linkin geçersiz olması için securityStamp kısmını değiştirlmeliyiz
+                    IdentityResult result = await userManager.ResetPasswordAsync(user, token, model.PasswordNew);
+
+                    if (result.Succeeded)
+                    {// securityStamp dğeiştireceğiz
+                        await userManager.UpdateSecurityStampAsync(user);
+                        TempData["passwordResetInfo"] = "Şifreniz Başarıyla yenilenmmiştir. Yeni şifreniz ile giriş yapabilirsiniz.";
+                    // bu mesajı login kısmında gösteriyorum    
+                    return RedirectToAction("Login");
+                    }
+                    else
+                    {
+                        //TempData["passwordResetInfo"] = "Şifreniz Başarıyla yenilenmmiştir. Yeni şifreniz ile giriş yapabilirsiniz.";
+                        foreach (var item in result.Errors)
+                        {
+                            if(item.Description== "Invalid token.")
+                            {
+                                ModelState.AddModelError("", "Link Daha önce kullanılmıştır.");
+                            }
+                            else
+                            {
+                                ModelState.AddModelError("", item.Description);
+                            }
+                        }
+
+                    }
+
+            }
+            // eğer hatalı işlem olursa tempdata siliniyor o yüzden dolayı  tekrardan yolluyorum
+            TempData["userId"] = userId;
+            TempData["token"] = token;
+            return View(model);
+        }
     }
 
 }

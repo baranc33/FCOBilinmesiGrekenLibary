@@ -3,6 +3,10 @@
 @{
     ViewData["Title"] = "LogIn";
 }
+@if (TempData["passwordResetInfo"] != null)
+{
+    <p>@TempData["passwordResetInfo"] </p>
+}
 
 <div class="row">
 
