@@ -103,120 +103,126 @@ namespace UdemyIdentity.Controllers
 
                return View(userViewModel);
            }
+*/
+        public IActionResult PasswordChange()
+        {
+            return View();
+        }
 
-           public IActionResult PasswordChange()
-           {
-               return View();
-           }
+        [HttpPost]
+        public async Task<IActionResult> PasswordChange(PasswordChangeViewModel passwordChangeViewModel)
+        {
+            // model statele hata varmı bakalım tekrar ve şifreler açısından
+            if (ModelState.IsValid)
+            {
+                AppUser user = CurrentUser;
 
-           [HttpPost]
-           public async Task<IActionResult> PasswordChange(PasswordChangeViewModel passwordChangeViewModel)
-           {
-               if (ModelState.IsValid)
-               {
-                   AppUser user = CurrentUser;
+                // eski şifre doğrumu diye kontrol ediyoruz
+                bool exist = userManager.CheckPasswordAsync(user, passwordChangeViewModel.PasswordOld).Result;
 
-                   bool exist = userManager.CheckPasswordAsync(user, passwordChangeViewModel.PasswordOld).Result;
+                if (exist)
+                {
+                    IdentityResult result = userManager.ChangePasswordAsync(user, passwordChangeViewModel.PasswordOld, passwordChangeViewModel.PasswordNew).Result;
 
-                   if (exist)
-                   {
-                       IdentityResult result = userManager.ChangePasswordAsync(user, passwordChangeViewModel.PasswordOld, passwordChangeViewModel.PasswordNew).Result;
+                    if (result.Succeeded)
+                    {
+                        // şifre güncellendiyse securityStampi değiştirelim
+                        await userManager.UpdateSecurityStampAsync(user);
+                        // çıkış yaptıralım coockieden
+                        await signInManager.SignOutAsync();
+                        // tekrardan giriş yaptaralım
+                        await signInManager.PasswordSignInAsync(user, passwordChangeViewModel.PasswordNew, true, false);
+                        // mesaj göstermek için bir data oluşturalım
+                        ViewBag.success = "true";
+                    }
+                    else
+                    {
+                        AddModelError(result);
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Eski şifreniz yanlış");
+                }
+            }
 
-                       if (result.Succeeded)
-                       {
-                           await userManager.UpdateSecurityStampAsync(user);
-                           await signInManager.SignOutAsync();
+            return View(passwordChangeViewModel);
+        }
 
-                           await signInManager.PasswordSignInAsync(user, passwordChangeViewModel.PasswordNew, true, false);
 
-                           ViewBag.success = "true";
-                       }
-                       else
-                       {
-                           AddModelError(result);
-                       }
-                   }
-                   else
-                   {
-                       ModelState.AddModelError("", "Eski şifreniz yanlış");
-                   }
-               }
+        public void LogOut()
+        {
+            signInManager.SignOutAsync();
+            RedirectToAction("Index", "Home");
+        }
+        /*   
+   public IActionResult AccessDenied(string ReturnUrl)
+   {
+       if (ReturnUrl.ToLower().Contains("violencegage"))
+       {
+           ViewBag.message = "Erişmeye çalıştığınız sayfa şiddet videoları içerdiğinden dolayı 15 yaşında büyük olmanız gerekmektedir";
+       }
+       else if (ReturnUrl.ToLower().Contains("ankarapage"))
+       {
+           ViewBag.message = "Bu sayfaya sadece şehir alanı ankara olan kullanıcılar erişebilir";
+       }
+       else if (ReturnUrl.ToLower().Contains("exchange"))
+       {
+           ViewBag.message = "30 günlük ücretsiz deneme hakkınız sona ermiştir.";
+       }
+       else
+       {
+           ViewBag.message = "Bu sayfaya erişim izniniz yoktur. Erişim izni almak için site yöneticisiyle görüşünüz";
+       }
 
-               return View(passwordChangeViewModel);
-           }
+       return View();
+   }
 
-           public void LogOut()
-           {
-               signInManager.SignOutAsync();
-           }
+   [Authorize(Roles = "manager,admin")]
+   public IActionResult Manager()
+   {
+       return View();
+   }
 
-           public IActionResult AccessDenied(string ReturnUrl)
-           {
-               if (ReturnUrl.ToLower().Contains("violencegage"))
-               {
-                   ViewBag.message = "Erişmeye çalıştığınız sayfa şiddet videoları içerdiğinden dolayı 15 yaşında büyük olmanız gerekmektedir";
-               }
-               else if (ReturnUrl.ToLower().Contains("ankarapage"))
-               {
-                   ViewBag.message = "Bu sayfaya sadece şehir alanı ankara olan kullanıcılar erişebilir";
-               }
-               else if (ReturnUrl.ToLower().Contains("exchange"))
-               {
-                   ViewBag.message = "30 günlük ücretsiz deneme hakkınız sona ermiştir.";
-               }
-               else
-               {
-                   ViewBag.message = "Bu sayfaya erişim izniniz yoktur. Erişim izni almak için site yöneticisiyle görüşünüz";
-               }
+   [Authorize(Roles = "editor,admin")]
+   public IActionResult Editor()
+   {
+       return View();
+   }
 
-               return View();
-           }
+   [Authorize(Policy = "AnkaraPolicy")]
+   public IActionResult AnkaraPage()
+   {
+       return View();
+   }
 
-           [Authorize(Roles = "manager,admin")]
-           public IActionResult Manager()
-           {
-               return View();
-           }
+   [Authorize(Policy = "ViolencePolicy")]
+   public IActionResult ViolencePage()
+   {
+       return View();
+   }
 
-           [Authorize(Roles = "editor,admin")]
-           public IActionResult Editor()
-           {
-               return View();
-           }
+   public async Task<IActionResult> ExchangeRedirect()
+   {
+       bool result = User.HasClaim(x => x.Type == "ExpireDateExchange");
 
-           [Authorize(Policy = "AnkaraPolicy")]
-           public IActionResult AnkaraPage()
-           {
-               return View();
-           }
+       if (!result)
+       {
+           Claim ExpireDateExchange = new Claim("ExpireDateExchange", DateTime.Now.AddDays(30).Date.ToShortDateString(), ClaimValueTypes.String, "Internal");
 
-           [Authorize(Policy = "ViolencePolicy")]
-           public IActionResult ViolencePage()
-           {
-               return View();
-           }
+           await userManager.AddClaimAsync(CurrentUser, ExpireDateExchange);
 
-           public async Task<IActionResult> ExchangeRedirect()
-           {
-               bool result = User.HasClaim(x => x.Type == "ExpireDateExchange");
+           await signInManager.SignOutAsync();
+           await signInManager.SignInAsync(CurrentUser, true);
+       }
 
-               if (!result)
-               {
-                   Claim ExpireDateExchange = new Claim("ExpireDateExchange", DateTime.Now.AddDays(30).Date.ToShortDateString(), ClaimValueTypes.String, "Internal");
+       return RedirectToAction("Exchange");
+   }
 
-                   await userManager.AddClaimAsync(CurrentUser, ExpireDateExchange);
-
-                   await signInManager.SignOutAsync();
-                   await signInManager.SignInAsync(CurrentUser, true);
-               }
-
-               return RedirectToAction("Exchange");
-           }
-
-           [Authorize(Policy = "ExchangePolicy")]
-           public IActionResult Exchange()
-           {
-               return View();
-           }*/
+   [Authorize(Policy = "ExchangePolicy")]
+   public IActionResult Exchange()
+   {
+       return View();
+   }*/
     }
 }
