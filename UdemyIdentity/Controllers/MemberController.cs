@@ -25,7 +25,6 @@ namespace UdemyIdentity.Controllers
 
             AppUser user = CurrentUser;
             // mapster kütüphanesi yükledik core olanı değil
-
             // direk böyle dönüştürünce aynı isime eşleştiriyor.
             UserViewModel userViewModel = user.Adapt<UserViewModel>();
             return View(userViewModel);
