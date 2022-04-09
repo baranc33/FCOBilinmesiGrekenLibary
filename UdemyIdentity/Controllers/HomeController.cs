@@ -137,8 +137,10 @@ namespace UdemyIdentity.Controllers
             return View(model);
         }
 
+        [HttpGet]
         public IActionResult ResetPassword()
         {
+            // post kısmında temp data kullanacağımız için burda null a çekiyoruz
             TempData["durum"] = null;
             return View();
         }
@@ -188,5 +190,14 @@ namespace UdemyIdentity.Controllers
         }
 
 
+        public IActionResult ResetPasswordConfirm(string userId, string token)
+        {
+            TempData["userId"] = userId;
+            TempData["token"] = token;
+
+            return View();
+        }
+
     }
+
 }

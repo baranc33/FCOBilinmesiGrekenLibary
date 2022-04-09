@@ -66,7 +66,7 @@ builder.Services.AddMvc();
 
 var app = builder.Build();
 app.UseDeveloperExceptionPage();// developer hata mesajlarý
-app.UseStatusCodePages();// özellikle bir content dönmiyen sayfalarda hata içeriði
+app.UseStatusCodePages();// özellikle bir view dönmiyen sayfalarda hata içeriði yazar
 app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();// derste hoca bunu yazmiyor ama yazmayýnca hata veriyor
