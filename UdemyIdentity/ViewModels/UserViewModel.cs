@@ -21,5 +21,10 @@ namespace UdemyIdentity.ViewModels
         [DataType(DataType.Password)]// emailde bu sekilde yazılabilir
         public string Password { get; set; }
 
+        public string Picture { get; set; }
+        public string City { get; set; }
+        public DateTime? BirthDay { get; set; }
+        public string Gender { get; set; }
+
     }
 }

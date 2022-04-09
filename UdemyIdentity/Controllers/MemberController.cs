@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +10,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using UdemyIdentity.Models;
-
+using UdemyIdentity.ViewModels;
 namespace UdemyIdentity.Controllers
 {
     [Authorize]
@@ -21,10 +22,13 @@ namespace UdemyIdentity.Controllers
 
         public IActionResult Index()
         {
-            //AppUser user = CurrentUser;
-            //UserViewModel userViewModel = user.Adapt<UserViewModel>();
-            //return View(userViewModel);
-            return View();
+
+            AppUser user = CurrentUser;
+            // mapster kütüphanesi yükledik core olanı değil
+
+            // direk böyle dönüştürünce aynı isime eşleştiriyor.
+            UserViewModel userViewModel = user.Adapt<UserViewModel>();
+            return View(userViewModel);
         }
 
         /*   public IActionResult UserEdit()

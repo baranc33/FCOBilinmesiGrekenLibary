@@ -21,6 +21,7 @@ namespace UdemyIdentity.Controllers
             this.roleManager = roleManager;
         }
 
+
         // model statete eror ekleme
         public void AddModelError(IdentityResult result)
         {
