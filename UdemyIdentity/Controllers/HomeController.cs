@@ -7,14 +7,10 @@ using UdemyIdentity.ViewModels;
 namespace UdemyIdentity.Controllers
 {
 
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
-        public UserManager<AppUser> userManager { get; }
-        public SignInManager<AppUser> signInManager { get; }
-        public HomeController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        public HomeController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager):base(userManager, signInManager)
         {
-            this.userManager = userManager;
-            this.signInManager = signInManager;
         }
 
         public IActionResult Index()
@@ -46,13 +42,7 @@ namespace UdemyIdentity.Controllers
                 }
                 else
                 {
-                    foreach (var item in result.Errors)
-                    {
-                        // eğer en başta key gönderirsek gönderdiğimiz key ilgili inputun altında görünür
-                        // biz genel hata olarak gösterecez
-                        ModelState.AddModelError(string.Empty, item.Description);
-
-                    }
+                    AddModelError(result);
                 }
 
             }
@@ -204,40 +194,31 @@ namespace UdemyIdentity.Controllers
         [HttpPost]// bind işlemi ile sadece şifreyi alıyoruz. Email gerekmediğini belirtiyoruz
         public async Task<IActionResult> ResetPasswordConfirm([Bind("PasswordNew")] PasswordResetViewModel model)
         {
-          
-                string userId = TempData["userId"].ToString();
-                string token = TempData["token"].ToString();
 
-                AppUser user = await userManager.FindByIdAsync(userId);
+            string userId = TempData["userId"].ToString();
+            string token = TempData["token"].ToString();
 
-                if (user != null)
-                {//bu oluşturduğumuz token içersinde securityStamp te bulunmaktadır
-                 // şifreyi değiştirdikten sonra linkin geçersiz olması için securityStamp kısmını değiştirlmeliyiz
-                    IdentityResult result = await userManager.ResetPasswordAsync(user, token, model.PasswordNew);
+            AppUser user = await userManager.FindByIdAsync(userId);
 
-                    if (result.Succeeded)
-                    {// securityStamp dğeiştireceğiz
-                        await userManager.UpdateSecurityStampAsync(user);
-                        TempData["passwordResetInfo"] = "Şifreniz Başarıyla yenilenmmiştir. Yeni şifreniz ile giriş yapabilirsiniz.";
+            if (user != null)
+            {//bu oluşturduğumuz token içersinde securityStamp te bulunmaktadır
+             // şifreyi değiştirdikten sonra linkin geçersiz olması için securityStamp kısmını değiştirlmeliyiz
+                IdentityResult result = await userManager.ResetPasswordAsync(user, token, model.PasswordNew);
+
+                if (result.Succeeded)
+                {// securityStamp dğeiştireceğiz
+                    await userManager.UpdateSecurityStampAsync(user);
+                    TempData["passwordResetInfo"] = "Şifreniz Başarıyla yenilenmmiştir. Yeni şifreniz ile giriş yapabilirsiniz.";
                     // bu mesajı login kısmında gösteriyorum    
                     return RedirectToAction("Login");
-                    }
-                    else
-                    {
-                        //TempData["passwordResetInfo"] = "Şifreniz Başarıyla yenilenmmiştir. Yeni şifreniz ile giriş yapabilirsiniz.";
-                        foreach (var item in result.Errors)
-                        {
-                            if(item.Description== "Invalid token.")
-                            {
-                                ModelState.AddModelError("", "Link Daha önce kullanılmıştır.");
-                            }
-                            else
-                            {
-                                ModelState.AddModelError("", item.Description);
-                            }
-                        }
+                }
+                else
+                {
 
-                    }
+                    AddModelError(result);
+                    //TempData["passwordResetInfo"] = "Şifreniz Başarıyla yenilenmmiştir. Yeni şifreniz ile giriş yapabilirsiniz.";
+
+                }
 
             }
             // eğer hatalı işlem olursa tempdata siliniyor o yüzden dolayı  tekrardan yolluyorum
