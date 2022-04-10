@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentVal", "FluentVal\FluentVal.csproj", "{6EF1D29C-4A5B-4527-AD54-0586527EF87D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UdemyIdentity", "UdemyIdentity\UdemyIdentity.csproj", "{F5450951-14FE-4B03-96E7-0D61B222560F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UdemyIdentity", "UdemyIdentity\UdemyIdentity.csproj", "{F5450951-14FE-4B03-96E7-0D61B222560F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

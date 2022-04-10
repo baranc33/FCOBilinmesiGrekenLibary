@@ -67,7 +67,15 @@ builder.Services.AddMvc();
 var app = builder.Build();
 app.UseDeveloperExceptionPage();// developer hata mesajlarý
 app.UseStatusCodePages();// özellikle bir view dönmiyen sayfalarda hata içeriði yazar
+
+
+//now handle other requests (default, static files, mvc actions, ...)
 app.UseStaticFiles();
+
+
+
+
+
 app.UseAuthentication();
 app.UseAuthorization();// derste hoca bunu yazmiyor ama yazmayýnca hata veriyor
 app.MapControllerRoute(
