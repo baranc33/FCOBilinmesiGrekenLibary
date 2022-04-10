@@ -25,167 +25,167 @@ namespace UdemyIdentity.Controllers
         {
             return View();
         }
-
-      /*  [HttpPost]
-        public IActionResult RoleCreate(RoleViewModel roleViewModel)
-        {
-            AppRole role = new AppRole();
-            role.Name = roleViewModel.Name;
-            IdentityResult result = roleManager.CreateAsync(role).Result;
-
-            if (result.Succeeded)
-
-            {
-                return RedirectToAction("Roles");
-            }
-            else
-            {
-                AddModelError(result);
-            }
-
-            return View(roleViewModel);
-        }
-
-        public IActionResult Roles()
-        {
-            return View(roleManager.Roles.ToList());
-        }
-
         public IActionResult Users()
         {
             return View(userManager.Users.ToList());
         }
+        /*  [HttpPost]
+          public IActionResult RoleCreate(RoleViewModel roleViewModel)
+          {
+              AppRole role = new AppRole();
+              role.Name = roleViewModel.Name;
+              IdentityResult result = roleManager.CreateAsync(role).Result;
 
-        public IActionResult RoleDelete(string id)
-        {
-            AppRole role = roleManager.FindByIdAsync(id).Result;
-            if (role != null)
-            {
-                IdentityResult result = roleManager.DeleteAsync(role).Result;
-            }
+              if (result.Succeeded)
 
-            return RedirectToAction("Roles");
-        }
+              {
+                  return RedirectToAction("Roles");
+              }
+              else
+              {
+                  AddModelError(result);
+              }
 
-        public IActionResult RoleUpdate(string id)
-        {
-            AppRole role = roleManager.FindByIdAsync(id).Result;
+              return View(roleViewModel);
+          }
 
-            if (role != null)
-            {
-                return View(role.Adapt<RoleViewModel>());
-            }
+          public IActionResult Roles()
+          {
+              return View(roleManager.Roles.ToList());
+          }
 
-            return RedirectToAction("Roles");
-        }
 
-        [HttpPost]
-        public IActionResult RoleUpdate(RoleViewModel roleViewModel)
-        {
-            AppRole role = roleManager.FindByIdAsync(roleViewModel.Id).Result;
 
-            if (role != null)
-            {
-                role.Name = roleViewModel.Name;
-                IdentityResult result = roleManager.UpdateAsync(role).Result;
+          public IActionResult RoleDelete(string id)
+          {
+              AppRole role = roleManager.FindByIdAsync(id).Result;
+              if (role != null)
+              {
+                  IdentityResult result = roleManager.DeleteAsync(role).Result;
+              }
 
-                if (result.Succeeded)
-                {
-                    return RedirectToAction("Roles");
-                }
-                else
-                {
-                    AddModelError(result);
-                }
-            }
-            else
-            {
-                ModelState.AddModelError("", "Güncelleme işlemi başarısız oldu.");
-            }
+              return RedirectToAction("Roles");
+          }
 
-            return View(roleViewModel);
-        }
+          public IActionResult RoleUpdate(string id)
+          {
+              AppRole role = roleManager.FindByIdAsync(id).Result;
 
-        public IActionResult RoleAssign(string id)
-        {
-            TempData["userId"] = id;
-            AppUser user = userManager.FindByIdAsync(id).Result;
+              if (role != null)
+              {
+                  return View(role.Adapt<RoleViewModel>());
+              }
 
-            ViewBag.userName = user.UserName;
+              return RedirectToAction("Roles");
+          }
 
-            IQueryable<AppRole> roles = roleManager.Roles;
+          [HttpPost]
+          public IActionResult RoleUpdate(RoleViewModel roleViewModel)
+          {
+              AppRole role = roleManager.FindByIdAsync(roleViewModel.Id).Result;
 
-            List<string> userroles = userManager.GetRolesAsync(user).Result as List<string>;
+              if (role != null)
+              {
+                  role.Name = roleViewModel.Name;
+                  IdentityResult result = roleManager.UpdateAsync(role).Result;
 
-            List<RoleAssignViewModel> roleAssignViewModels = new List<RoleAssignViewModel>();
+                  if (result.Succeeded)
+                  {
+                      return RedirectToAction("Roles");
+                  }
+                  else
+                  {
+                      AddModelError(result);
+                  }
+              }
+              else
+              {
+                  ModelState.AddModelError("", "Güncelleme işlemi başarısız oldu.");
+              }
 
-            foreach (var role in roles)
-            {
-                RoleAssignViewModel r = new RoleAssignViewModel();
-                r.RoleId = role.Id;
-                r.RoleName = role.Name;
-                if (userroles.Contains(role.Name))
-                {
-                    r.Exist = true;
-                }
-                else
-                {
-                    r.Exist = false;
-                }
-                roleAssignViewModels.Add(r);
-            }
+              return View(roleViewModel);
+          }
 
-            return View(roleAssignViewModels);
-        }
+          public IActionResult RoleAssign(string id)
+          {
+              TempData["userId"] = id;
+              AppUser user = userManager.FindByIdAsync(id).Result;
 
-        [HttpPost]
-        public async Task<IActionResult> RoleAssign(List<RoleAssignViewModel> roleAssignViewModels)
-        {
-            AppUser user = userManager.FindByIdAsync(TempData["userId"].ToString()).Result;
+              ViewBag.userName = user.UserName;
 
-            foreach (var item in roleAssignViewModels)
-            {
-                if (item.Exist)
+              IQueryable<AppRole> roles = roleManager.Roles;
 
-                {
-                    await userManager.AddToRoleAsync(user, item.RoleName);
-                }
-                else
-                {
-                    await userManager.RemoveFromRoleAsync(user, item.RoleName);
-                }
-            }
+              List<string> userroles = userManager.GetRolesAsync(user).Result as List<string>;
 
-            return RedirectToAction("Users");
-        }
+              List<RoleAssignViewModel> roleAssignViewModels = new List<RoleAssignViewModel>();
 
-        public async Task<IActionResult> ResetUserPassword(string id)
-        {
-            AppUser user = await userManager.FindByIdAsync(id);
+              foreach (var role in roles)
+              {
+                  RoleAssignViewModel r = new RoleAssignViewModel();
+                  r.RoleId = role.Id;
+                  r.RoleName = role.Name;
+                  if (userroles.Contains(role.Name))
+                  {
+                      r.Exist = true;
+                  }
+                  else
+                  {
+                      r.Exist = false;
+                  }
+                  roleAssignViewModels.Add(r);
+              }
 
-            PasswordResetByAdminViewModel passwordResetByAdminViewModel = new PasswordResetByAdminViewModel();
-            passwordResetByAdminViewModel.UserId = user.Id;
+              return View(roleAssignViewModels);
+          }
 
-            return View(passwordResetByAdminViewModel);
-        }
+          [HttpPost]
+          public async Task<IActionResult> RoleAssign(List<RoleAssignViewModel> roleAssignViewModels)
+          {
+              AppUser user = userManager.FindByIdAsync(TempData["userId"].ToString()).Result;
 
-        [HttpPost]
-        public async Task<IActionResult> ResetUserPassword(PasswordResetByAdminViewModel passwordResetByAdminViewModel)
-        {
-            AppUser user = await userManager.FindByIdAsync(passwordResetByAdminViewModel.UserId);
+              foreach (var item in roleAssignViewModels)
+              {
+                  if (item.Exist)
 
-            string token = await userManager.GeneratePasswordResetTokenAsync(user);
+                  {
+                      await userManager.AddToRoleAsync(user, item.RoleName);
+                  }
+                  else
+                  {
+                      await userManager.RemoveFromRoleAsync(user, item.RoleName);
+                  }
+              }
 
-            await userManager.ResetPasswordAsync(user, token, passwordResetByAdminViewModel.NewPassword);
+              return RedirectToAction("Users");
+          }
 
-            await userManager.UpdateSecurityStampAsync(user);
+          public async Task<IActionResult> ResetUserPassword(string id)
+          {
+              AppUser user = await userManager.FindByIdAsync(id);
 
-            //securitystamp degerini  update etmezsem kullanıcı eski şifresiyle sitemizde dolaşmaya devam eder ne zaman çıkış yaparsa ozaman tekrar yeni şifreyle girmek zorunda
-            //eger update edersen kullanıcı  otomatik olarak  sitemize girdiği zaman login ekranına yönlendirilecek.
+              PasswordResetByAdminViewModel passwordResetByAdminViewModel = new PasswordResetByAdminViewModel();
+              passwordResetByAdminViewModel.UserId = user.Id;
 
-            //Identity Mimarisi cookie tarafındaki securitystamp ile veritabanındaki security stamp değerini her 30 dakikada bir kontrol eder. Kullanıcı eski şifreyle en fazla server da session açıldıktan sonra 30 dakkika gezebilir. Bunu isterseniz 1 dakkikaya indirebilirsiniz. ama tavsiye edilmez. her bir dakika da  her kullanıcı için veritabanı kontrolü  yük getirir.
+              return View(passwordResetByAdminViewModel);
+          }
 
-            return RedirectToAction("Users");
-        }*/
+          [HttpPost]
+          public async Task<IActionResult> ResetUserPassword(PasswordResetByAdminViewModel passwordResetByAdminViewModel)
+          {
+              AppUser user = await userManager.FindByIdAsync(passwordResetByAdminViewModel.UserId);
+
+              string token = await userManager.GeneratePasswordResetTokenAsync(user);
+
+              await userManager.ResetPasswordAsync(user, token, passwordResetByAdminViewModel.NewPassword);
+
+              await userManager.UpdateSecurityStampAsync(user);
+
+              //securitystamp degerini  update etmezsem kullanıcı eski şifresiyle sitemizde dolaşmaya devam eder ne zaman çıkış yaparsa ozaman tekrar yeni şifreyle girmek zorunda
+              //eger update edersen kullanıcı  otomatik olarak  sitemize girdiği zaman login ekranına yönlendirilecek.
+
+              //Identity Mimarisi cookie tarafındaki securitystamp ile veritabanındaki security stamp değerini her 30 dakikada bir kontrol eder. Kullanıcı eski şifreyle en fazla server da session açıldıktan sonra 30 dakkika gezebilir. Bunu isterseniz 1 dakkikaya indirebilirsiniz. ama tavsiye edilmez. her bir dakika da  her kullanıcı için veritabanı kontrolü  yük getirir.
+
+              return RedirectToAction("Users");
+          }*/
     }
 }
