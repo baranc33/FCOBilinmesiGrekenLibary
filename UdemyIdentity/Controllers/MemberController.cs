@@ -51,6 +51,7 @@ namespace UdemyIdentity.Controllers
             if (ModelState.IsValid)
             {// kendi bilgisini güncelliceği için kendi bilgelerinden getiriyoruz
                 AppUser user = CurrentUser;
+                string oldPictrueName = user.Picture;
                 // 1 telefon numarası 1 kişi tarafından kullanılmasını istiyorsak ona göre bir sorgu hazirlicaz
                 // öncelikle kullanıcının telefon numarasını getiriyoruz
                 string phone = userManager.GetPhoneNumberAsync(user).Result;
@@ -76,6 +77,18 @@ namespace UdemyIdentity.Controllers
 
                         user.Picture = "/UserPicture/" + fileName;
                     }
+                    // burdan eski resmi silcem 13. indexten alıyorumki user picture yazısını iptal edeyim
+                    if (oldPictrueName!=null && oldPictrueName.Length>5)
+                    {// hiç resmi yoksa diye kontrol ediyorum
+                    var deletePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserPicture", oldPictrueName.Substring(13));
+                    FileInfo fi =new FileInfo(deletePath);
+                    System.IO.File.Delete(deletePath);
+                    fi.Delete();
+                        
+                    }
+
+
+
                 }
 
                 user.UserName = userViewModel.UserName;
