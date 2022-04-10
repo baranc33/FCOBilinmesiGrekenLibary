@@ -31,12 +31,13 @@ namespace UdemyIdentity.Controllers
             return View(userViewModel);
         }
 
+        [HttpGet]
         public IActionResult UserEdit()
         {
             AppUser user = CurrentUser;
 
             UserViewModel userViewModel = user.Adapt<UserViewModel>();
-
+            // enum içersine sayı değilde bir enumdan yazı gönderiyorum
             ViewBag.Gender = new SelectList(Enum.GetNames(typeof(Gender)));
 
             return View(userViewModel);
@@ -44,9 +45,12 @@ namespace UdemyIdentity.Controllers
 
         [HttpPost]// burda model ve resim alıyoruz
         public async Task<IActionResult> UserEdit(UserViewModel userViewModel, IFormFile userPicture)
-        {
+        {// şifre gerekli olmadığından model stattenden çıkarıyorum
             ModelState.Remove("Password");
+            // kişi resim yüklemek zorunda olmadığından dolayı bunuda çıkarıyorum
             ModelState.Remove("userPicture");
+
+            // gelen veriyi enumdan değiştiriyorum
             ViewBag.Gender = new SelectList(Enum.GetNames(typeof(Gender)));
             if (ModelState.IsValid)
             {// kendi bilgisini güncelliceği için kendi bilgelerinden getiriyoruz
@@ -80,29 +84,25 @@ namespace UdemyIdentity.Controllers
                     // burdan eski resmi silcem 13. indexten alıyorumki user picture yazısını iptal edeyim
                     if (oldPictrueName!=null && oldPictrueName.Length>5)
                     {// hiç resmi yoksa diye kontrol ediyorum
-                    var deletePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserPicture", oldPictrueName.Substring(13));
-                    FileInfo fi =new FileInfo(deletePath);
-                    System.IO.File.Delete(deletePath);
-                    fi.Delete();
-                        
+                        var deletePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserPicture", oldPictrueName.Substring(13));
+                        FileInfo fi =new FileInfo(deletePath);
+                        System.IO.File.Delete(deletePath);
+                        fi.Delete();
                     }
 
 
 
                 }
-
+                // değiştircem bilgileri tek tek seçiyorum
                 user.UserName = userViewModel.UserName;
                 user.Email = userViewModel.Email;
                 user.PhoneNumber = userViewModel.PhoneNumber;
-
                 user.City = userViewModel.City;
-
                 user.BirthDay = userViewModel.BirthDay;
-
                 user.Gender = (int)userViewModel.Gender;
-
+                // update işlemi
                 IdentityResult result = await userManager.UpdateAsync(user);
-
+                // başarılıysa securtiystamp güncellemesi için sigout ve signin yaptırıyorum
                 if (result.Succeeded)
                 {
                     await userManager.UpdateSecurityStampAsync(user);
@@ -112,7 +112,7 @@ namespace UdemyIdentity.Controllers
                     ViewBag.success = "true";
                 }
                 else
-                {
+                {// hataları tek tek dönüyorum
                     AddModelError(result);
                 }
             }
