@@ -15,7 +15,7 @@ namespace UdemyIdentity.Controllers
         {
             return View();
         }
-/*
+
         public IActionResult Claims()
         {
             return View(User.Claims.ToList());
@@ -26,7 +26,7 @@ namespace UdemyIdentity.Controllers
             return View();
         }
 
-        [HttpPost]
+      /*  [HttpPost]
         public IActionResult RoleCreate(RoleViewModel roleViewModel)
         {
             AppRole role = new AppRole();

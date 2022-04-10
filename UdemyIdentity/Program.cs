@@ -27,6 +27,7 @@ builder.Services.AddIdentity<AppUser, AppRole>(opt =>
     opt.Password.RequireUppercase = false;
     opt.Password.RequireNonAlphanumeric = false;
     opt.Password.RequireDigit = false;
+  
 
 }).AddEntityFrameworkStores<AppIdentityDbContext>().AddPasswordValidator<CustomPasswordValidator>()
 .AddUserValidator<CustomUserValidator>().AddErrorDescriber<CustomIdentityErrorDescriber>()
@@ -49,6 +50,7 @@ builder.Services.ConfigureApplicationCookie(opts =>
     opts.Cookie = cookieBuilder;
     opts.SlidingExpiration = true;
     opts.ExpireTimeSpan = System.TimeSpan.FromDays(60);
+    // role eriþimi yoksa yönlendirme
     opts.AccessDeniedPath = new PathString("/Member/AccessDenied");
 });
 
