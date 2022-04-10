@@ -175,7 +175,7 @@ namespace UdemyIdentity.Controllers
         //    signInManager.SignOutAsync();
         //    return RedirectToAction("Index", "Home");
         //}
-        /*   
+       
    public IActionResult AccessDenied(string ReturnUrl)
    {
        if (ReturnUrl.ToLower().Contains("violencegage"))
@@ -197,52 +197,51 @@ namespace UdemyIdentity.Controllers
 
        return View();
    }
+        /*      [Authorize(Roles = "manager,admin")]
+          public IActionResult Manager()
+          {
+              return View();
+          }
 
-   [Authorize(Roles = "manager,admin")]
-   public IActionResult Manager()
-   {
-       return View();
-   }
+          [Authorize(Roles = "editor,admin")]
+          public IActionResult Editor()
+          {
+              return View();
+          }
 
-   [Authorize(Roles = "editor,admin")]
-   public IActionResult Editor()
-   {
-       return View();
-   }
+          [Authorize(Policy = "AnkaraPolicy")]
+          public IActionResult AnkaraPage()
+          {
+              return View();
+          }
 
-   [Authorize(Policy = "AnkaraPolicy")]
-   public IActionResult AnkaraPage()
-   {
-       return View();
-   }
+          [Authorize(Policy = "ViolencePolicy")]
+          public IActionResult ViolencePage()
+          {
+              return View();
+          }
 
-   [Authorize(Policy = "ViolencePolicy")]
-   public IActionResult ViolencePage()
-   {
-       return View();
-   }
+          public async Task<IActionResult> ExchangeRedirect()
+          {
+              bool result = User.HasClaim(x => x.Type == "ExpireDateExchange");
 
-   public async Task<IActionResult> ExchangeRedirect()
-   {
-       bool result = User.HasClaim(x => x.Type == "ExpireDateExchange");
+              if (!result)
+              {
+                  Claim ExpireDateExchange = new Claim("ExpireDateExchange", DateTime.Now.AddDays(30).Date.ToShortDateString(), ClaimValueTypes.String, "Internal");
 
-       if (!result)
-       {
-           Claim ExpireDateExchange = new Claim("ExpireDateExchange", DateTime.Now.AddDays(30).Date.ToShortDateString(), ClaimValueTypes.String, "Internal");
+                  await userManager.AddClaimAsync(CurrentUser, ExpireDateExchange);
 
-           await userManager.AddClaimAsync(CurrentUser, ExpireDateExchange);
+                  await signInManager.SignOutAsync();
+                  await signInManager.SignInAsync(CurrentUser, true);
+              }
 
-           await signInManager.SignOutAsync();
-           await signInManager.SignInAsync(CurrentUser, true);
-       }
+              return RedirectToAction("Exchange");
+          }
 
-       return RedirectToAction("Exchange");
-   }
-
-   [Authorize(Policy = "ExchangePolicy")]
-   public IActionResult Exchange()
-   {
-       return View();
-   }*/
+          [Authorize(Policy = "ExchangePolicy")]
+          public IActionResult Exchange()
+          {
+              return View();
+          }*/
     }
 }
