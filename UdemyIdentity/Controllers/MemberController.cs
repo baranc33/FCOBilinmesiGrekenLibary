@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using UdemyIdentity.Enums;
 using UdemyIdentity.Models;
 using UdemyIdentity.ViewModels;
 namespace UdemyIdentity.Controllers
@@ -36,74 +37,76 @@ namespace UdemyIdentity.Controllers
 
             UserViewModel userViewModel = user.Adapt<UserViewModel>();
 
-            //ViewBag.Gender = new SelectList(Enum.GetNames(typeof(Gender)));
+            ViewBag.Gender = new SelectList(Enum.GetNames(typeof(Gender)));
 
             return View(userViewModel);
         }
-        /*
-[HttpPost]
-public async Task<IActionResult> UserEdit(UserViewModel userViewModel, IFormFile userPicture)
-{
-    ModelState.Remove("Password");
-    ViewBag.Gender = new SelectList(Enum.GetNames(typeof(Gender)));
-    if (ModelState.IsValid)
-    {
-        AppUser user = CurrentUser;
 
-        string phone = userManager.GetPhoneNumberAsync(user).Result;
-
-        if (phone != userViewModel.PhoneNumber)
+        [HttpPost]// burda model ve resim alıyoruz
+        public async Task<IActionResult> UserEdit(UserViewModel userViewModel, IFormFile userPicture)
         {
-            if (userManager.Users.Any(u => u.PhoneNumber == userViewModel.PhoneNumber))
-            {
-                ModelState.AddModelError("", "Bu telefon numarası başka üye tarafından kullanılmaktadır.");
-                return View(userViewModel);
+            ModelState.Remove("Password");
+            ModelState.Remove("userPicture");
+            ViewBag.Gender = new SelectList(Enum.GetNames(typeof(Gender)));
+            if (ModelState.IsValid)
+            {// kendi bilgisini güncelliceği için kendi bilgelerinden getiriyoruz
+                AppUser user = CurrentUser;
+                // 1 telefon numarası 1 kişi tarafından kullanılmasını istiyorsak ona göre bir sorgu hazirlicaz
+                // öncelikle kullanıcının telefon numarasını getiriyoruz
+                string phone = userManager.GetPhoneNumberAsync(user).Result;
+                // değiştirilimişmi numarası diye bakıyoruz
+                if (phone != userViewModel.PhoneNumber)
+                {// yeni telefon numarası daha önce kullanılmışmsa hata ekleyip gönderiyoruz
+                    if (userManager.Users.Any(u => u.PhoneNumber == userViewModel.PhoneNumber))
+                    {
+                        ModelState.AddModelError("", "Bu telefon numarası başka üye tarafından kullanılmaktadır.");
+                        return View(userViewModel);
+                    }
+                }
+                // bir resim yüklenmişmi ? aynı zamanda isiminide kontrol ediyoruz
+                if (userPicture != null && userPicture.Length > 0)
+                {// bir path ismi oluşturuyoruz
+                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(userPicture.FileName);
+
+                    var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserPicture", fileName);
+
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        await userPicture.CopyToAsync(stream);
+
+                        user.Picture = "/UserPicture/" + fileName;
+                    }
+                }
+
+                user.UserName = userViewModel.UserName;
+                user.Email = userViewModel.Email;
+                user.PhoneNumber = userViewModel.PhoneNumber;
+
+                user.City = userViewModel.City;
+
+                user.BirthDay = userViewModel.BirthDay;
+
+                user.Gender = (int)userViewModel.Gender;
+
+                IdentityResult result = await userManager.UpdateAsync(user);
+
+                if (result.Succeeded)
+                {
+                    await userManager.UpdateSecurityStampAsync(user);
+                    await signInManager.SignOutAsync();
+                    await signInManager.SignInAsync(user, true);
+
+                    ViewBag.success = "true";
+                }
+                else
+                {
+                    AddModelError(result);
+                }
             }
+
+            return View(userViewModel);
         }
 
-        if (userPicture != null && userPicture.Length > 0)
-        {
-            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(userPicture.FileName);
-
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserPicture", fileName);
-
-            using (var stream = new FileStream(path, FileMode.Create))
-            {
-                await userPicture.CopyToAsync(stream);
-
-                user.Picture = "/UserPicture/" + fileName;
-            }
-        }
-
-        user.UserName = userViewModel.UserName;
-        user.Email = userViewModel.Email;
-        user.PhoneNumber = userViewModel.PhoneNumber;
-
-        user.City = userViewModel.City;
-
-        user.BirthDay = userViewModel.BirthDay;
-
-        user.Gender = (int)userViewModel.Gender;
-
-        IdentityResult result = await userManager.UpdateAsync(user);
-
-        if (result.Succeeded)
-        {
-            await userManager.UpdateSecurityStampAsync(user);
-            await signInManager.SignOutAsync();
-            await signInManager.SignInAsync(user, true);
-
-            ViewBag.success = "true";
-        }
-        else
-        {
-            AddModelError(result);
-        }
-    }
-
-    return View(userViewModel);
-}
-*/
         public IActionResult PasswordChange()
         {
             return View();
@@ -149,12 +152,16 @@ public async Task<IActionResult> UserEdit(UserViewModel userViewModel, IFormFile
             return View(passwordChangeViewModel);
         }
 
-
-        public IActionResult LogOut()
+        public void Logout()
         {
             signInManager.SignOutAsync();
-            return RedirectToAction("Index", "Home");
         }
+
+        //public IActionResult LogOut()
+        //{
+        //    signInManager.SignOutAsync();
+        //    return RedirectToAction("Index", "Home");
+        //}
         /*   
    public IActionResult AccessDenied(string ReturnUrl)
    {
