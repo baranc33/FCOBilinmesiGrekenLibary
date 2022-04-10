@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width" />
     <title>Title</title>
     <script src="~/jquery/jquery.js"></script>
-    <link href="~/twitter-bootstrap/css/bootstrap.css" rel="stylesheet" />
-    <script src="~/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
-    <script src="~/jquery-validate/jquery.validate.js"></script>
+    <link href="~/twitter-bootstrap/css/bootstrap.css"  rel="stylesheet"/>
+    <script src="~/jquery-validate/jquery.validate.min.js"></script>
+    <script src="~/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+
     <style>
     .btnlink{
         max-height:50px;
@@ -26,6 +28,7 @@
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" asp-action="Index" asp-controller="Member">Üye Ana Sayfa</a>
                     </li>
+                  
                 </ul>
             </div>
         </div>
@@ -36,11 +39,15 @@
             <div class="col-md-9">
                 @RenderBody()
             </div>
-            <div class="col-md-3 d-grid gap-2 mx-auto ">
+            <div class="col-md-3 d-grid gap-2 mx-auto h-100 mt-5">
                 <a class="btn btn-info text-white btnlink" asp-action="PasswordChange" asp-controller="Member">Şifre Değiştirme</a>
                 <a class="btn btn-info text-white btnlink" asp-action="UserEdit" asp-controller="Member">Bilgi Güncelleme</a>
                 <a class="btn btn-info text-white btnlink" asp-action="Logout" asp-controller="Member">Çıkış</a>
-            
+
+                 <a class="btn btn-danger btn-block" asp-action="AnkaraPage" asp-controller="Member">Ankara sayfa</a>
+                <a class="btn btn-danger btn-block" asp-action="ViolencePage" asp-controller="Member">Şiddet içeren sayfa</a>
+                <a class="btn btn-danger btn-block" asp-action="ExchangeRedirect" asp-controller="Member">Borsa bilgileri</a>
+ 
             </div>
 
         </div>

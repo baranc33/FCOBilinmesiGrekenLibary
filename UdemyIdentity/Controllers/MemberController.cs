@@ -30,80 +30,80 @@ namespace UdemyIdentity.Controllers
             return View(userViewModel);
         }
 
-        /*       public IActionResult UserEdit()
-             {
-                 AppUser user = CurrentUser;
-
-                 UserViewModel userViewModel = user.Adapt<UserViewModel>();
-
-                 ViewBag.Gender = new SelectList(Enum.GetNames(typeof(Gender)));
-
-                 return View(userViewModel);
-             }
-
-        [HttpPost]
-        public async Task<IActionResult> UserEdit(UserViewModel userViewModel, IFormFile userPicture)
+        public IActionResult UserEdit()
         {
-            ModelState.Remove("Password");
-            ViewBag.Gender = new SelectList(Enum.GetNames(typeof(Gender)));
-            if (ModelState.IsValid)
-            {
-                AppUser user = CurrentUser;
+            AppUser user = CurrentUser;
 
-                string phone = userManager.GetPhoneNumberAsync(user).Result;
+            UserViewModel userViewModel = user.Adapt<UserViewModel>();
 
-                if (phone != userViewModel.PhoneNumber)
-                {
-                    if (userManager.Users.Any(u => u.PhoneNumber == userViewModel.PhoneNumber))
-                    {
-                        ModelState.AddModelError("", "Bu telefon numarası başka üye tarafından kullanılmaktadır.");
-                        return View(userViewModel);
-                    }
-                }
-
-                if (userPicture != null && userPicture.Length > 0)
-                {
-                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(userPicture.FileName);
-
-                    var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserPicture", fileName);
-
-                    using (var stream = new FileStream(path, FileMode.Create))
-                    {
-                        await userPicture.CopyToAsync(stream);
-
-                        user.Picture = "/UserPicture/" + fileName;
-                    }
-                }
-
-                user.UserName = userViewModel.UserName;
-                user.Email = userViewModel.Email;
-                user.PhoneNumber = userViewModel.PhoneNumber;
-
-                user.City = userViewModel.City;
-
-                user.BirthDay = userViewModel.BirthDay;
-
-                user.Gender = (int)userViewModel.Gender;
-
-                IdentityResult result = await userManager.UpdateAsync(user);
-
-                if (result.Succeeded)
-                {
-                    await userManager.UpdateSecurityStampAsync(user);
-                    await signInManager.SignOutAsync();
-                    await signInManager.SignInAsync(user, true);
-
-                    ViewBag.success = "true";
-                }
-                else
-                {
-                    AddModelError(result);
-                }
-            }
+            //ViewBag.Gender = new SelectList(Enum.GetNames(typeof(Gender)));
 
             return View(userViewModel);
         }
-     */
+        /*
+[HttpPost]
+public async Task<IActionResult> UserEdit(UserViewModel userViewModel, IFormFile userPicture)
+{
+    ModelState.Remove("Password");
+    ViewBag.Gender = new SelectList(Enum.GetNames(typeof(Gender)));
+    if (ModelState.IsValid)
+    {
+        AppUser user = CurrentUser;
+
+        string phone = userManager.GetPhoneNumberAsync(user).Result;
+
+        if (phone != userViewModel.PhoneNumber)
+        {
+            if (userManager.Users.Any(u => u.PhoneNumber == userViewModel.PhoneNumber))
+            {
+                ModelState.AddModelError("", "Bu telefon numarası başka üye tarafından kullanılmaktadır.");
+                return View(userViewModel);
+            }
+        }
+
+        if (userPicture != null && userPicture.Length > 0)
+        {
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(userPicture.FileName);
+
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserPicture", fileName);
+
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                await userPicture.CopyToAsync(stream);
+
+                user.Picture = "/UserPicture/" + fileName;
+            }
+        }
+
+        user.UserName = userViewModel.UserName;
+        user.Email = userViewModel.Email;
+        user.PhoneNumber = userViewModel.PhoneNumber;
+
+        user.City = userViewModel.City;
+
+        user.BirthDay = userViewModel.BirthDay;
+
+        user.Gender = (int)userViewModel.Gender;
+
+        IdentityResult result = await userManager.UpdateAsync(user);
+
+        if (result.Succeeded)
+        {
+            await userManager.UpdateSecurityStampAsync(user);
+            await signInManager.SignOutAsync();
+            await signInManager.SignInAsync(user, true);
+
+            ViewBag.success = "true";
+        }
+        else
+        {
+            AddModelError(result);
+        }
+    }
+
+    return View(userViewModel);
+}
+*/
         public IActionResult PasswordChange()
         {
             return View();
