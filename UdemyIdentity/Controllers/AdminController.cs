@@ -95,18 +95,12 @@ namespace UdemyIdentity.Controllers
                   IdentityResult result = roleManager.UpdateAsync(role).Result;
 
                   if (result.Succeeded)
-                  {
                       return RedirectToAction("Roles");
-                  }
                   else
-                  {
                       AddModelError(result);
-                  }
               }
               else
-              {
                   ModelState.AddModelError("", "Güncelleme işlemi başarısız oldu.");
-              }
 
               return View(roleViewModel);
           }
