@@ -35,19 +35,16 @@ namespace UdemyIdentity.Controllers
         [HttpPost]
           public IActionResult RoleCreate(RoleViewModel roleViewModel)
           {
+            // önce Role Oluşturuyoruz
               AppRole role = new AppRole();
               role.Name = roleViewModel.Name;
-              IdentityResult result = roleManager.CreateAsync(role).Result;
-
+           // rol oluşturma
+            IdentityResult result = roleManager.CreateAsync(role).Result;
+            // işlem başarılıysa standart işlemler
               if (result.Succeeded)
-
-              {
                   return RedirectToAction("Roles");
-              }
               else
-              {
                   AddModelError(result);
-              }
 
               return View(roleViewModel);
           }
