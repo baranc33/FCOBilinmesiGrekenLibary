@@ -1,5 +1,6 @@
 ﻿
 using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using UdemyIdentity.Models;
@@ -7,7 +8,7 @@ using UdemyIdentity.ViewModels;
 
 namespace UdemyIdentity.Controllers
 {
-    //[Authorize(Roles = "admin")]
+    [Authorize(Roles = "Admin")]
     public class AdminController : BaseController
     {
         public AdminController(UserManager<AppUser> userManager, RoleManager<AppRole> _roleManager) : base(userManager, null, _roleManager)

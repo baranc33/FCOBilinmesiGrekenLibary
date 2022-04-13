@@ -9,13 +9,21 @@ namespace UdemyIdentity.Controllers
 
     public class HomeController : BaseController
     {
-        public HomeController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager):base(userManager, signInManager)
+        public HomeController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager) : base(userManager, signInManager)
         {
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            if(User.Identity.IsAuthenticated) return RedirectToAction("Index","Member");
+            if (User.Identity.IsAuthenticated)
+            {
+                IList<string> Roles = await userManager.GetRolesAsync(CurrentUser);
+                if (Roles.Contains("Admin"))
+                    return RedirectToAction("Index", "Admin");
+
+                return RedirectToAction("Index", "Member");
+
+            }
             return View();
         }
         public IActionResult SignUp()
