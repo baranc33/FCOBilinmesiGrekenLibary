@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using UdemyIdentity.Models;
+using UdemyIdentity.ViewModels;
 
 namespace UdemyIdentity.Controllers
 {
@@ -29,7 +30,7 @@ namespace UdemyIdentity.Controllers
         {
             return View(userManager.Users.ToList());
         }
-        /*  [HttpPost]
+        [HttpPost]
           public IActionResult RoleCreate(RoleViewModel roleViewModel)
           {
               AppRole role = new AppRole();
@@ -186,6 +187,6 @@ namespace UdemyIdentity.Controllers
               //Identity Mimarisi cookie tarafındaki securitystamp ile veritabanındaki security stamp değerini her 30 dakikada bir kontrol eder. Kullanıcı eski şifreyle en fazla server da session açıldıktan sonra 30 dakkika gezebilir. Bunu isterseniz 1 dakkikaya indirebilirsiniz. ama tavsiye edilmez. her bir dakika da  her kullanıcı için veritabanı kontrolü  yük getirir.
 
               return RedirectToAction("Users");
-          }*/
+          }
     }
 }
