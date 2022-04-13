@@ -107,17 +107,21 @@ namespace UdemyIdentity.Controllers
 
           public IActionResult RoleAssign(string id)
           {
+            // üyenin id sini alıyoruz ve temp dataya atıyoruz
               TempData["userId"] = id;
+            // userı getiriyoruz
               AppUser user = userManager.FindByIdAsync(id).Result;
-
+            // içerde kullanmak için username ide alıyoruz
               ViewBag.userName = user.UserName;
-
+            // rolleri listeliyoruz
               IQueryable<AppRole> roles = roleManager.Roles;
-
+            // userın rollerini getiriyoruz list<stringe> cast ediyoruz
               List<string> userroles = userManager.GetRolesAsync(user).Result as List<string>;
-
+            // yeni bi role asignview model oluşturuyoruz
               List<RoleAssignViewModel> roleAssignViewModels = new List<RoleAssignViewModel>();
 
+            // rolleri tek tek dönüyoruz ve role assigne atıyoruz 
+            // hangi roller varsa true çek ediyoruzki check boxta  chked yapmak için
               foreach (var role in roles)
               {
                   RoleAssignViewModel r = new RoleAssignViewModel();
@@ -140,8 +144,10 @@ namespace UdemyIdentity.Controllers
           [HttpPost]
           public async Task<IActionResult> RoleAssign(List<RoleAssignViewModel> roleAssignViewModels)
           {
+            // userı buluyoruz
               AppUser user = userManager.FindByIdAsync(TempData["userId"].ToString()).Result;
-
+            // her role için tek tek işlem yapıoruz 
+            // ya ekliyoruz eklemiyorsak siliyoruz
               foreach (var item in roleAssignViewModels)
               {
                   if (item.Exist)
