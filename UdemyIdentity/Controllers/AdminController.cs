@@ -10,7 +10,7 @@ namespace UdemyIdentity.Controllers
     //[Authorize(Roles = "admin")]
     public class AdminController : BaseController
     {
-        public AdminController(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager) : base(userManager, null, roleManager)
+        public AdminController(UserManager<AppUser> userManager, RoleManager<AppRole> _roleManager) : base(userManager, null, _roleManager)
         {
         }
 
@@ -63,13 +63,12 @@ namespace UdemyIdentity.Controllers
 
 
           public IActionResult RoleDelete(string id)
-          {
+          {// klasik silme işlemi id den buluyoru sonra id varsa işlem yapıyoruz
               AppRole role = roleManager.FindByIdAsync(id).Result;
               if (role != null)
-              {
+              {// silme işlemi yapıyoruz 
                   IdentityResult result = roleManager.DeleteAsync(role).Result;
               }
-
               return RedirectToAction("Roles");
           }
 

@@ -4,6 +4,6 @@ namespace UdemyIdentity.Models
 {
     public class AppRole : IdentityRole
     {
-        public string RoleType { get; set; }
+        public string? RoleType { get; set; }
     }
 }
