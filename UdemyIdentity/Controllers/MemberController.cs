@@ -69,6 +69,7 @@ namespace UdemyIdentity.Controllers
                     }
                 }
                 // bir resim yüklenmişmi ? aynı zamanda isiminide kontrol ediyoruz
+               
                 if (userPicture != null && userPicture.Length > 0)
                 {// bir path ismi oluşturuyoruz
                     var fileName = Guid.NewGuid().ToString() + Path.GetExtension(userPicture.FileName);
@@ -89,9 +90,6 @@ namespace UdemyIdentity.Controllers
                         System.IO.File.Delete(deletePath);
                         fi.Delete();
                     }
-
-
-
                 }
                 // değiştircem bilgileri tek tek seçiyorum
                 user.UserName = userViewModel.UserName;
